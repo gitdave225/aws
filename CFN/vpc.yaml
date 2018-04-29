@@ -1,0 +1,21 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Network Stack CFN for TCI
+Resources:
+  TCIVPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 172.16.0.0/12
+      EnableDnsSupport: 'true'
+      EnableDnsHostnames: 'true'
+      InstanceTenancy: default
+      Tags:
+      - Key: Name 
+        Value: ToolChainInc-VPC
+      - Key: Tool
+        Value: CFN
+Outputs:
+  TCIVPCID:
+    Description: VPC ID for ToolChain, Inc.
+    Value: !Ref TCIVPC
+    Export:
+      Name: !Sub "${AWS::StackName}-VPCID"
