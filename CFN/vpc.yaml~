@@ -1,10 +1,5 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Description: Network Stack CFN for TCI
-Parameters:
-  MyIPAddr:
-    Type: String
-    Default: '173.70.126.112/32'
-
 Resources:
   TCIVPC:
     Type: AWS::EC2::VPC
@@ -35,7 +30,7 @@ Resources:
       Protocol: '6'
       RuleAction: allow
       Egress: 'false'
-      CidrBlock: !Ref MyIPAddr 
+      CidrBlock: !GetAtt TCIVPC.CidrBlock
       PortRange:
         From: '80'
         To: '80'
@@ -47,7 +42,7 @@ Resources:
       Protocol: '6'
       RuleAction: allow
       Egress: 'false'
-      CidrBlock: !Ref MyIPAddr
+      CidrBlock: !GetAtt TCIVPC.CidrBlock
       PortRange:
         From: '443'
         To: '443'
@@ -59,7 +54,7 @@ Resources:
       Protocol: '6'
       RuleAction: allow
       Egress: 'false'
-      CidrBlock: !Ref MyIPAddr
+      CidrBlock: !GetAtt TCIVPC.CidrBlock
       PortRange:
         From: '22'
         To: '22'
@@ -71,7 +66,7 @@ Resources:
       Protocol: '6'
       RuleAction: allow
       Egress: 'false'
-      CidrBlock: !Ref MyIPAddr
+      CidrBlock: !GetAtt TCIVPC.CidrBlock
       PortRange:
         From: '3389'
         To: '3389'
@@ -83,7 +78,7 @@ Resources:
       Protocol: '6'
       RuleAction: allow
       Egress: 'false'
-      CidrBlock: !MyIPAddr
+      CidrBlock: !GetAtt TCIVPC.CidrBlock
       PortRange:
         From: '5985'
         To: '5986'
@@ -95,7 +90,7 @@ Resources:
       Protocol: '6'
       RuleAction: allow
       Egress: 'false'
-      CidrBlock: '0.0.0.0/0'
+      CidrBlock: !GetAtt TCIVPC.CidrBlock
       PortRange:
         From: '1025'
         To: '65535'
