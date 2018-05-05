@@ -83,7 +83,7 @@ Resources:
       Protocol: '6'
       RuleAction: allow
       Egress: 'false'
-      CidrBlock: !MyIPAddr
+      CidrBlock: !Ref MyIPAddr
       PortRange:
         From: '5985'
         To: '5986'
