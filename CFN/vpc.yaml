@@ -173,6 +173,36 @@ Resources:
       RouteTableId: !Ref TCIRTPub
       DestinationCidrBlock: 0.0.0.0/0
       GatewayId: !Ref TCIIG 
+  TCIVPCSG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: 'TCI-Default-SG'
+      VpcId: !Ref TCIVPC
+      SecurityGroupIngress:
+        - IpProtocol: 'tcp'
+          FromPort: '22'
+          ToPort: '22'
+          CidrIp: !Ref MyIPAddr
+      SecurityGroupIngress:
+        - IpProtocol: 'tcp'
+          FromPort: '3389'
+          ToPort: '3389'
+          CidrIp: !Ref MyIPAddr
+      SecurityGroupIngress:
+        - IpProtocol: 'tcp'
+          FromPort: '80'
+          ToPort: '80'
+          CidrIp: !Ref MyIPAddr
+      SecurityGroupIngress:
+        - IpProtocol: 'tcp'
+          FromPort: '443'
+          ToPort: '443'
+          CidrIp: !Ref MyIPAddr
+      SecurityGroupIngress:
+        - IpProtocol: 'tcp'
+          FromPort: '1024'
+          ToPort: '65535'
+          CidrIp: '0.0.0.0/0'
 Outputs:
   TCIVPCID:
     Description: VPC ID for ToolChain, Inc.
