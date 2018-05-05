@@ -21,7 +21,7 @@ Resources:
   TCINetACL:
     Type: AWS::EC2::NetworkAcl
     Properties:
-      VpcID: !Ref TCIVPC
+      VpcId: !Ref TCIVPC
       Tags:
       - Key: Name
         Value: ToolChainInc-NetworkACL
