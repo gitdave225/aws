@@ -19,7 +19,7 @@ Resources:
       - Key: Tool
         Value: CFN
   TCINetACL:
-    Type: AWS::EC2:NetworkAcl
+    Type: AWS::EC2::NetworkAcl
     Properties:
       VpcID: !Ref TCIVPC
       Tags:
@@ -52,7 +52,7 @@ Resources:
         From: '443'
         To: '443'
   TCINACLInSSH:
-          Type: AWS::EC2::NetworkAclEntry
+    Type: AWS::EC2::NetworkAclEntry
     Properties:
       NetworkAclId: !Ref TCINetACL
       RuleNumber: '120'
