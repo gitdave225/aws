@@ -136,18 +136,43 @@ Resources:
         From: '1024'
         To: '65535'
   TCIIG:
-   Type: AWS::EC2::InternetGateway
-   Properties:
-     Tags:
-       - Key: Name
-         Value: ToolChainInc-IG
-       - Key: Tool
-         Value: CFN
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Name
+          Value: ToolChainInc-IG
+        - Key: Tool
+          Value: CFN
   TCIAttachIG:
     Type: AWS::EC2::VPCGatewayAttachment
     Properties:
       VpcId: !Ref TCIVPC
       InternetGatewayId: !Ref TCIIG
+  TCIRTPub:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref TCIVPC
+      Tags:
+        - Key: Name
+          Value: ToolChainInc-RouteTablePublic
+        - Key: Tool
+          Value: CFN
+  TCIRTPrv:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref TCIVPC
+      Tags:
+        - Key: Name
+          Value: ToolChainInc-RouteTablePrivate
+        - Key: Tool
+          Value: CFN
+  TCIRTIGEntry:
+    Type: AWS::EC2::Route
+    DependsOn: TCIAttachIG
+    Properties:
+      RouteTableId: !Ref TCIRTPub
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref TCIIG 
 Outputs:
   TCIVPCID:
     Description: VPC ID for ToolChain, Inc.
