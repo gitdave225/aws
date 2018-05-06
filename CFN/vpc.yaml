@@ -205,9 +205,78 @@ Resources:
           Value: ToolChainInc-DefaultSG
         - Key: Tool
           Value: CFN
+  TCISNPubA:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref TCIVPC
+      CidrBlock: '172.32.10.0/24'
+      AvailabilityZone: !Join ['', [!Ref AWS::Region, 'a']]
+      Tags:
+        - Key: Name
+          Value: ToolChainInc-Public-A
+        - Key: Tool
+          Value: CFN
+  TCISNPubB:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref TCIVPC
+      CidrBlock: '172.32.10.0/24'
+      AvailabilityZone: !Join ['', [!Ref AWS::Region, 'b']]
+      Tags:
+        - Key: Name
+          Value: ToolChainInc-Public-B
+        - Key: Tool
+          Value: CFN
+  TCISNPrvE:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref TCIVPC
+      CidrBlock: '172.32.10.0/24'
+      AvailabilityZone: !Join ['', [!Ref AWS::Region, 'e']]
+      Tags:
+        - Key: Name
+          Value: ToolChainInc-Private-E
+        - Key: Tool
+          Value: CFN
+  TCISNPrvF:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref TCIVPC
+      CidrBlock: '172.32.10.0/24'
+      AvailabilityZone: !Join ['', [!Ref AWS::Region, 'f']]
+      Tags:
+        - Key: Name
+          Value: ToolChainInc-Private-F
+        - Key: Tool
+          Value: CFN
+  TCIPubAAssoc:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref TCIRTPub
+      SubnetId: !Ref TCISNPubA
+  TCIPubBAssoc:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref TCIRTPub
+      SubnetId: !Ref TCISNPubB
+  TCIPrvEAssoc:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref TCIRTPrv
+      SubnetId: !Ref TCISNPrvE
+  TCIPrvFAssoc:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref TCIRTPrv
+      SubnetId: !Ref TCISNPrvF
 Outputs:
   TCIVPCID:
     Description: VPC ID for ToolChain, Inc.
     Value: !Ref TCIVPC
     Export:
       Name: !Sub "${AWS::StackName}-VPCID"
+  TCIVPCSG:
+    Description: Default Security Group for ToolChain, Inc.
+    Value: !Ref TCIVPCSG
+    Export:
+      Name: !Sub "${AWS::StackName}-SG"
