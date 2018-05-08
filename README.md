@@ -1,6 +1,6 @@
 # AWS Related Scripts
 
-2018-02-19
+2018-05-05
 
 I plan on uploading cloudformation templates and AWS sample files to this repo. Any other AWS related bits will end up here as well.
 
@@ -34,3 +34,12 @@ I plan on uploading cloudformation templates and AWS sample files to this repo. 
 
   Next phase is to test out the snapshots by cloning them and rebuilding a new server out of them. That and tagging the snapshots with the date and time of the snapshot and what instance they come from.
 
+
+To-Do:
+  1. Setup AWS Environment.
+  2. Build a dispora server.
+    https://wiki.diasporafoundation.org/Installation
+  3. Setup chef server.
+  4. Build a docker environment.
+  5. Try out ECS.
+ 
