@@ -1,0 +1,15 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Test Instance CFN for TCI
+Parameters: {}
+
+Mappings:
+  ThisRegion:
+    us-east-1:
+      Name: ue1
+    us-west-2:
+      Name: uw2
+
+Resources:
+
+
+Outputs:
