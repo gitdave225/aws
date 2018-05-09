@@ -1,6 +1,16 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Description: Test Instance CFN for TCI
-Parameters: {}
+Parameters:
+  MySubnet:
+    Type: AWS::EC2::Subnet::Id
+    Description: Specify Subnet
+  RootDisk:
+    Type: String
+    Description: Size of root disk
+    Default: "20"
+  MyKey:
+    Type: AWS::EC2::KeyPair::KeyName
+    Description: KP to secure login
 
 Mappings:
   ThisRegion:
@@ -8,8 +18,35 @@ Mappings:
       Name: ue1
     us-west-2:
       Name: uw2
+  ApprovedAMIs:
+    us-east-1:
+      ID:
+    us-west-2:
+      ID: 
 
 Resources:
-
+  TestServer:
+    Type: AWS::EC2::Instance
+    Properties:
+      BlockDeviceMappings:
+        - DeviceName: /dev/sda1
+          Ebs:
+            VolumeSize: !Ref RootDisk
+            VolumeType: gp2
+      ImageId: !FindInMap [ ApprovedAMIs, !Ref "AWS::Region", ID ]
+      InstanceType: "t1.micro"
+      KeyName: !Ref MyKey
+      SecurityGroupIds: !ImportValue "TCIStack-SG"
+      SubnetId: !Ref MySubnet
+      Tags:
+        - Key: Name
+          Value: "TestInstance"
+        - Key: Tool
+          Value: "CFN"
+      UserData:
+        Base64 |
+          #!/bin/bash
+          yum update -y
+           
 
 Outputs:
