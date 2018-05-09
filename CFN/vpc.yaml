@@ -210,7 +210,7 @@ Resources:
     Properties:
       VpcId: !Ref TCIVPC
       CidrBlock: '172.32.10.0/24'
-      AvailabilityZone: !Join ['', [!Ref AWS::Region, 'a']]
+      AvailabilityZone: !Join ['', [!Ref "AWS::Region", 'a']]
       Tags:
         - Key: Name
           Value: ToolChainInc-Public-A
@@ -220,8 +220,8 @@ Resources:
     Type: AWS::EC2::Subnet
     Properties:
       VpcId: !Ref TCIVPC
-      CidrBlock: '172.32.10.0/24'
-      AvailabilityZone: !Join ['', [!Ref AWS::Region, 'b']]
+      CidrBlock: '172.33.10.0/24'
+      AvailabilityZone: !Join ['', [!Ref "AWS::Region", 'b']]
       Tags:
         - Key: Name
           Value: ToolChainInc-Public-B
@@ -231,8 +231,8 @@ Resources:
     Type: AWS::EC2::Subnet
     Properties:
       VpcId: !Ref TCIVPC
-      CidrBlock: '172.32.10.0/24'
-      AvailabilityZone: !Join ['', [!Ref AWS::Region, 'e']]
+      CidrBlock: '172.42.10.0/24'
+      AvailabilityZone: !Join ['', [!Ref "AWS::Region", 'e']]
       Tags:
         - Key: Name
           Value: ToolChainInc-Private-E
@@ -242,8 +242,8 @@ Resources:
     Type: AWS::EC2::Subnet
     Properties:
       VpcId: !Ref TCIVPC
-      CidrBlock: '172.32.10.0/24'
-      AvailabilityZone: !Join ['', [!Ref AWS::Region, 'f']]
+      CidrBlock: '172.43.10.0/24'
+      AvailabilityZone: !Join ['', [!Ref "AWS::Region", 'f']]
       Tags:
         - Key: Name
           Value: ToolChainInc-Private-F
@@ -280,3 +280,24 @@ Outputs:
     Value: !Ref TCIVPCSG
     Export:
       Name: !Sub "${AWS::StackName}-SG"
+  TCISNPubA:
+    Description: Public Subnet A
+    Value: !Ref TCISNPubA
+    Export:
+      Name: !Sub "${AWS::StackName}-PubA"
+  TCISNPubB:
+    Description: Public Subnet B
+    Value: !Ref TCISNPubB
+    Export:
+      Name: !Sub "${AWS::StackName}-PubB"
+  TCISNPrvE:
+    Description: Private Subnet E
+    Value: !Ref TCISNPrvE
+    Export:
+      Name: !Sub "${AWS::StackName}-PrvE"
+  TCISNPrvF:
+    Description: Private Subnet F
+    Value: !Ref TCISNPrvF
+    Export:
+      Name: !Sub "${AWS::StackName}-PrvF"
+
