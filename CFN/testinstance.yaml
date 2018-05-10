@@ -44,7 +44,7 @@ Resources:
         - Key: Tool
           Value: "CFN"
       UserData:
-        Base64 |
+        !Base64 |
           #!/bin/bash
           yum update -y
            
