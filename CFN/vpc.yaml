@@ -211,6 +211,7 @@ Resources:
       VpcId: !Ref TCIVPC
       CidrBlock: '172.32.10.0/24'
       AvailabilityZone: !Join ['', [!Ref "AWS::Region", 'a']]
+      MapPublicIpOnLaunch: 'true'
       Tags:
         - Key: Name
           Value: ToolChainInc-Public-A
@@ -220,7 +221,7 @@ Resources:
     Type: AWS::EC2::Subnet
     Properties:
       VpcId: !Ref TCIVPC
-      CidrBlock: '172.41.10.0/24'
+      CidrBlock: '172.32.100.0/24'
       AvailabilityZone: !Join ['', [!Ref "AWS::Region", 'b']]
       Tags:
         - Key: Name
@@ -231,7 +232,7 @@ Resources:
     Type: AWS::EC2::Subnet
     Properties:
       VpcId: !Ref TCIVPC
-      CidrBlock: '172.42.10.0/24'
+      CidrBlock: '172.32.101.0/24'
       AvailabilityZone: !Join ['', [!Ref "AWS::Region", 'c']]
       Tags:
         - Key: Name
@@ -269,14 +270,14 @@ Outputs:
     Value: !Ref TCISNPubA
     Export:
       Name: !Sub "${AWS::StackName}-PubA"
-  TCISNPrvE:
+  TCISNPrvB:
     Description: Private Subnet B
-    Value: !Ref TCISNPrvE
+    Value: !Ref TCISNPrvB
     Export:
       Name: !Sub "${AWS::StackName}-PrvB"
-  TCISNPrvF:
+  TCISNPrvC:
     Description: Private Subnet C
-    Value: !Ref TCISNPrvF
+    Value: !Ref TCISNPrvC
     Export:
       Name: !Sub "${AWS::StackName}-PrvC"
 

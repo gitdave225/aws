@@ -4,13 +4,15 @@ Parameters:
   MySubnet:
     Type: AWS::EC2::Subnet::Id
     Description: Specify Subnet
+    Default: TCIStack-PubA
   RootDisk:
     Type: String
     Description: Size of root disk
-    Default: "20"
+    Default: "1"
   MyKey:
     Type: AWS::EC2::KeyPair::KeyName
     Description: KP to secure login
+    Default: mydcawskp.pem
 
 Mappings:
   ThisRegion:
@@ -20,9 +22,9 @@ Mappings:
       Name: uw2
   ApprovedAMIs:
     us-east-1:
-      ID:
+      ID: ami-467ca739
     us-west-2:
-      ID: 
+      ID: ami-6b8cef13
 
 Resources:
   TestServer:
@@ -34,9 +36,9 @@ Resources:
             VolumeSize: !Ref RootDisk
             VolumeType: gp2
       ImageId: !FindInMap [ ApprovedAMIs, !Ref "AWS::Region", ID ]
-      InstanceType: "t1.micro"
+      InstanceType: "t2.micro"
       KeyName: !Ref MyKey
-      SecurityGroupIds: !ImportValue "TCIStack-SG"
+      SecurityGroupIds: [ !ImportValue "TCIStack-SG" ]
       SubnetId: !Ref MySubnet
       Tags:
         - Key: Name
@@ -46,7 +48,9 @@ Resources:
       UserData:
         !Base64 |
           #!/bin/bash
-          yum update -y
-           
-
-Outputs:
+          sudo yum update -y
+          sudo yum install -y httpd
+          sudo service httpd start
+          sudo chkconfig enable httpd
+          sudo su -
+          echo '<html> <body> <h1>hello world</h1></body></html>' > /var/www/html/index.html
