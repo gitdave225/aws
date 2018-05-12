@@ -216,37 +216,26 @@ Resources:
           Value: ToolChainInc-Public-A
         - Key: Tool
           Value: CFN
-  TCISNPubB:
+  TCISNPrvB:
     Type: AWS::EC2::Subnet
     Properties:
       VpcId: !Ref TCIVPC
-      CidrBlock: '172.33.10.0/24'
+      CidrBlock: '172.41.10.0/24'
       AvailabilityZone: !Join ['', [!Ref "AWS::Region", 'b']]
       Tags:
         - Key: Name
-          Value: ToolChainInc-Public-B
+          Value: ToolChainInc-Private-B
         - Key: Tool
           Value: CFN
-  TCISNPrvE:
+  TCISNPrvC:
     Type: AWS::EC2::Subnet
     Properties:
       VpcId: !Ref TCIVPC
       CidrBlock: '172.42.10.0/24'
-      AvailabilityZone: !Join ['', [!Ref "AWS::Region", 'e']]
+      AvailabilityZone: !Join ['', [!Ref "AWS::Region", 'c']]
       Tags:
         - Key: Name
-          Value: ToolChainInc-Private-E
-        - Key: Tool
-          Value: CFN
-  TCISNPrvF:
-    Type: AWS::EC2::Subnet
-    Properties:
-      VpcId: !Ref TCIVPC
-      CidrBlock: '172.43.10.0/24'
-      AvailabilityZone: !Join ['', [!Ref "AWS::Region", 'f']]
-      Tags:
-        - Key: Name
-          Value: ToolChainInc-Private-F
+          Value: ToolChainInc-Private-C
         - Key: Tool
           Value: CFN
   TCIPubAAssoc:
@@ -254,21 +243,16 @@ Resources:
     Properties:
       RouteTableId: !Ref TCIRTPub
       SubnetId: !Ref TCISNPubA
-  TCIPubBAssoc:
-    Type: AWS::EC2::SubnetRouteTableAssociation
-    Properties:
-      RouteTableId: !Ref TCIRTPub
-      SubnetId: !Ref TCISNPubB
-  TCIPrvEAssoc:
+  TCIPrvBAssoc:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
       RouteTableId: !Ref TCIRTPrv
-      SubnetId: !Ref TCISNPrvE
-  TCIPrvFAssoc:
+      SubnetId: !Ref TCISNPrvB
+  TCIPrvCAssoc:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
       RouteTableId: !Ref TCIRTPrv
-      SubnetId: !Ref TCISNPrvF
+      SubnetId: !Ref TCISNPrvC
 Outputs:
   TCIVPCID:
     Description: VPC ID for ToolChain, Inc.
@@ -285,19 +269,14 @@ Outputs:
     Value: !Ref TCISNPubA
     Export:
       Name: !Sub "${AWS::StackName}-PubA"
-  TCISNPubB:
-    Description: Public Subnet B
-    Value: !Ref TCISNPubB
-    Export:
-      Name: !Sub "${AWS::StackName}-PubB"
   TCISNPrvE:
-    Description: Private Subnet E
+    Description: Private Subnet B
     Value: !Ref TCISNPrvE
     Export:
-      Name: !Sub "${AWS::StackName}-PrvE"
+      Name: !Sub "${AWS::StackName}-PrvB"
   TCISNPrvF:
-    Description: Private Subnet F
+    Description: Private Subnet C
     Value: !Ref TCISNPrvF
     Export:
-      Name: !Sub "${AWS::StackName}-PrvF"
+      Name: !Sub "${AWS::StackName}-PrvC"
 
