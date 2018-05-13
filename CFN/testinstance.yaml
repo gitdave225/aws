@@ -31,15 +31,18 @@ Resources:
     Type: AWS::EC2::Instance
     Properties:
       BlockDeviceMappings:
-        - DeviceName: /dev/sda1
+        - DeviceName: /dev/xvda
           Ebs:
             VolumeSize: !Ref RootDisk
             VolumeType: gp2
       ImageId: !FindInMap [ ApprovedAMIs, !Ref "AWS::Region", ID ]
       InstanceType: "t2.micro"
       KeyName: !Ref MyKey
-      SecurityGroupIds: [ !ImportValue "TCIStack-SG" ]
-      SubnetId: !Ref MySubnet
+      NetworkInterfaces:
+        - AssociatePublicIpAddress: true
+          DeviceIndex: '0'
+          SubnetId: !Ref MySubnet
+          GroupSet: [ !ImportValue "TCIStack-SG" ]
       Tags:
         - Key: Name
           Value: "TestInstance"
