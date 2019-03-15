@@ -1,0 +1,59 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Test Instance CFN for TCI
+Parameters:
+  MySubnet:
+    Type: AWS::EC2::Subnet::Id
+    Description: Specify Subnet
+    Default: TCIStack-PubA
+  RootDisk:
+    Type: String
+    Description: Size of root disk
+    Default: "1"
+  MyKey:
+    Type: AWS::EC2::KeyPair::KeyName
+    Description: KP to secure login
+    Default: mydcawskp.pem
+
+Mappings:
+  ThisRegion:
+    us-east-1:
+      Name: ue1
+    us-west-2:
+      Name: uw2
+  ApprovedAMIs:
+    us-east-1:
+      ID: ami-467ca739
+    us-west-2:
+      ID: ami-6b8cef13
+
+Resources:
+  TestServer:
+    Type: AWS::EC2::Instance
+    Properties:
+      BlockDeviceMappings:
+        - DeviceName: /dev/xvda
+          Ebs:
+            VolumeSize: !Ref RootDisk
+            VolumeType: gp2
+      ImageId: !FindInMap [ ApprovedAMIs, !Ref "AWS::Region", ID ]
+      InstanceType: "t2.micro"
+      KeyName: !Ref MyKey
+      NetworkInterfaces:
+        - AssociatePublicIpAddress: true
+          DeviceIndex: '0'
+          SubnetId: !Ref MySubnet
+          GroupSet: [ !ImportValue "TCIStack-SG" ]
+      Tags:
+        - Key: Name
+          Value: "TestInstance"
+        - Key: Tool
+          Value: "CFN"
+      UserData:
+        !Base64 |
+          #!/bin/bash
+          sudo yum update -y
+          sudo yum install -y httpd
+          sudo service httpd start
+          sudo chkconfig enable httpd
+          sudo su -
+          echo '<html> <body> <h1>hello world</h1></body></html>' > /var/www/html/index.html
