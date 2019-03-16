@@ -155,6 +155,8 @@ Resources:
           Value: !Ref ContactInfo
         - Key: ContactEmail
           Value: !Ref ContactEmail
+        - Key: Environment
+          Value: !Ref Env
         - Key: Tool
           Value: CFN
 
@@ -168,6 +170,8 @@ Resources:
           Value: !Ref ContactInfo
         - Key: ContactEmail
           Value: !Ref ContactEmail
+        - Key: Environment
+          Value: !Ref Env
         - Key: Tool
           Value: CFN
 
@@ -188,6 +192,8 @@ Resources:
           Value: !Ref ContactInfo
         - Key: ContactEmail
           Value: !Ref ContactEmail
+        - Key: Environment
+          Value: !Ref Env
         - Key: Tool
           Value: CFN
 
@@ -202,6 +208,8 @@ Resources:
           Value: !Ref ContactInfo
         - Key: ContactEmail
           Value: !Ref ContactEmail
+        - Key: Environment
+          Value: !Ref Env
         - Key: Tool
           Value: CFN
 
@@ -226,6 +234,8 @@ Resources:
           Value: !Ref ContactInfo
         - Key: ContactEmail
           Value: !Ref ContactEmail
+        - Key: Environment
+          Value: !Ref Env
         - Key: Tool
           Value: CFN
 
@@ -242,6 +252,8 @@ Resources:
           Value: !Ref ContactInfo
         - Key: ContactEmail
           Value: !Ref ContactEmail
+        - Key: Environment
+          Value: !Ref Env
         - Key: Tool
           Value: CFN
 
@@ -259,6 +271,8 @@ Resources:
           Value: !Ref ContactInfo
         - Key: ContactEmail
           Value: !Ref ContactEmail
+        - Key: Environment
+          Value: !Ref Env
         - Key: Tool
           Value: CFN
 
