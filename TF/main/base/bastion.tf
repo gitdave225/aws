@@ -1,18 +1,9 @@
-variable "workreg" {
-    default = "us-east-1"
-}
-
 variable "validamis" {
     type = "map"
     default = {
         "us-east-1" = "ami-0de53d8956e8dcf80"
         "us-west-2" = "ami-061392db613a6357b"
     }  
-}
-
-
-provider "aws" {
-   region = "${var.workreg}"
 }
 
 resource "aws_key_pair" "mykp" {
@@ -45,6 +36,6 @@ resource "aws_instance" "myinstance" {
    }
 }
 
-output "instanceid" {
+output "bastionid" {
   value = "${aws_instance.myinstance.id}"
 }

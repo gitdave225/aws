@@ -2,4 +2,5 @@
 .gitignore
 .terraform
 *.tfvars
-
+*.tfstate
+*.tfstate.backup

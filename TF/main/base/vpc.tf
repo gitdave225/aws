@@ -1,5 +1,5 @@
 resource "aws_vpc" "clientvpc" {
-    cidr_block = "${lookup(var.CIDRRegions, format("%s%s", lookup(var.RegionMap, var.workreg), var.Env))}"
+    cidr_block = "${lookup(var.CIDRAZ, format("%s%s", lookup(var.RegionMap, var.workreg), var.Env))}"
     enable_dns_support = true
     enable_dns_hostnames = true
 
