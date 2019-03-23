@@ -69,3 +69,12 @@ variable "SNCIDR" {
         "uw2dbsandbox" = "172.30.140.0/22"
     }
 }
+
+variable "validamis" {
+    type = "map"
+    description = "Approved AMIs"
+    default = {
+        "us-east-1" = "ami-0de53d8956e8dcf80"
+        "us-west-2" = "ami-061392db613a6357b"
+    }  
+}

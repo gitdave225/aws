@@ -6,11 +6,15 @@ variable "RegionMap" {
     type = "map"
 }
 
-variable "AZRegions" {
+variable "CIDRAZ" {
     type = "map"
 }
 
-variable "CIDRAZ" {
+variable "validamis" {
+    type = "map"
+}
+
+variable "AZRegions" {
     type = "map"
 }
 

@@ -3,8 +3,12 @@ provider "aws" {
 }
 module "base" {
     source = "../../main/base"
+
     workreg = "${var.workreg}"
-    Env = "${var.Env}"
-    CIRDAZ = "${var.CIDRAZ}"
+    Env       = "${var.Env}"
+    CIDRAZ    = "${var.CIDRAZ}"
     RegionMap = "${var.RegionMap}"
+    validamis = "${var.validamis}"
+    AZRegions = "${var.AZRegions}"
+    SNCIDR    = "${var.SNCIDR}"
 }
