@@ -1,12 +1,7 @@
-resource "aws_key_pair" "mykp" {
-    key_name = "mydcaws"
-    public_key = "${var.PubKey}"
-}
-
 resource "aws_instance" "bastioninst" {
    ami                    = "${lookup(var.validamis, var.workreg)}"
    instance_type          = "t2.micro"
-   key_name               = "${aws_key_pair.mykp.key_name}"
+   key_name               = "${var.PubKey}"
    vpc_security_group_ids = [ "${aws_security_group.BastionSG.id}" ]
    subnet_id              = "${aws_subnet.clientFE2.id}"
    iam_instance_profile   = "${aws_iam_instance_profile.clientiprof.name}"
