@@ -3,6 +3,8 @@ variable "workreg" {}
 variable "Env" {}
 # prod, nonprod, sandbox
 
+variable "TargetIP" {}
+
 variable "RegionMap" {
     type = "map"
     default = {

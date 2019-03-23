@@ -11,4 +11,5 @@ module "base" {
     validamis = "${var.validamis}"
     AZRegions = "${var.AZRegions}"
     SNCIDR    = "${var.SNCIDR}"
+    TargetIP  = "${var.TargetIP}"
 }

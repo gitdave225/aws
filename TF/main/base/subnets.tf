@@ -57,6 +57,54 @@ resource "aws_nat_gateway" "natgw" {
   }
 }
 
+resource "aws_route_table" "clientRTExternal" {
+    vpc_id = "${aws_vpc.clientvpc.id}"
+
+    route {
+        cidr_block = "0.0.0.0/0"
+        gateway_id = "${aws_internet_gateway.clientigw.id}"
+    }
+
+    tags = {
+        Name = "client-RouteTablePublic"
+        Tool = "terraform"
+    }
+}
+
+resource "aws_route_table" "clientRT" {
+    vpc_id = "${aws_vpc.clientvpc.id}"
+
+    route {
+        cidr_block = "0.0.0.0/0"
+        nat_gateway_id = "${aws_nat_gateway.natgw.id}"
+    }
+
+    tags = {
+        Name = "client-RouteTablePrivate"
+        Tool = "terraform"
+    }
+}
+
+resource "aws_route_table_association" "clientExt1Assoc" {
+    subnet_id = "${aws_subnet.clientFE1.id}"
+    route_table_id = "${aws_route_table.clientRTExternal.id}"
+}
+
+resource "aws_route_table_association" "clientExt2Assoc" {
+    subnet_id = "${aws_subnet.clientFE2.id}"
+    route_table_id = "${aws_route_table.clientRTExternal.id}"
+}
+
+resource "aws_route_table_association" "clientAppAssoc" {
+    subnet_id = "${aws_subnet.clientApp.id}"
+    route_table_id = "${aws_route_table.clientRT.id}"
+}
+
+resource "aws_route_table_association" "clientDBAssoc" {
+    subnet_id = "${aws_subnet.clientDB.id}"
+    route_table_id = "${aws_route_table.clientRT.id}"
+}
+
 output "clientFE1" {
   value = "${aws_subnet.clientFE1.id}"
 }
@@ -71,8 +119,4 @@ output "clientApp" {
 
 output "clientDB" {
   value = "${aws_subnet.clientDB.id}"
-}
-
-output "natgw" {
-  value = "${aws_nat_gateway.natgw.id}"
 }

@@ -2,6 +2,8 @@ variable "workreg" {}
 
 variable "Env" {}
 
+variable "TargetIP" {}
+
 variable "RegionMap" {
     type = "map"
 }

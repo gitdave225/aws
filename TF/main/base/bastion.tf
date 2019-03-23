@@ -3,13 +3,15 @@ resource "aws_key_pair" "mykp" {
     public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCc3nQ3uTpMZVIenCOOwWNmtRRLbZ2DcHPFbzUumUJCzZrJIKhkaVvkh/y0aJoGDdxQBpqOh2cw9w9aLFYwU25fVZt14xNf2ux+ZTui/x5g25SGEzQHhJE8a3N5dXrGomXnFaP0lwYe9O906MX3U19mMk9eGk1WkK3OwgKIqqDUZVRzPjrBW+n1YA/703Up3LTaKJSS5LbDHsdHzVjD5wO+6UMSR/ukd9Gxnn6p00IdQNKEhtDzMsFtjJeiIPjWY7kw6eQVOQt04NUIWodRn6Ijjdo0fJtgpdQ6V7Ktu2xtOaGSD8YPUbLDuaicoEccLOJCFtZ9Fs6j8+A/FpYTSqYT email@example.com"
 }
 
-resource "aws_instance" "myinstance" {
-   ami                = "${lookup(var.validamis, var.workreg)}"
-   instance_type      = "t2.micro"
-   key_name           = "${aws_key_pair.mykp.key_name}"
-
+resource "aws_instance" "bastioninst" {
+   ami                    = "${lookup(var.validamis, var.workreg)}"
+   instance_type          = "t2.micro"
+   key_name               = "${aws_key_pair.mykp.key_name}"
+   # vpc_security_group_ids = ""
+   subnet_id              = "${aws_subnet.clientFE2.id}"
+   # iam_instance_profile   = ""
    provisioner "local-exec" {
-       command        = "echo ${aws_instance.myinstance.private_ip} > ipaddress.txt"
+       command        = "echo ${aws_instance.bastioninst.private_ip} > ipaddress.txt"
    }
    
    lifecycle {
@@ -28,5 +30,5 @@ resource "aws_instance" "myinstance" {
 }
 
 output "bastionid" {
-  value = "${aws_instance.myinstance.id}"
+  value = "${aws_instance.bastioninst.id}"
 }
