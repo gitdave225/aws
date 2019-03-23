@@ -13,7 +13,9 @@ resource "aws_instance" "bastioninst" {
    }
    
    provisioner "local-exec" {
-       command        = "echo ${aws_instance.bastioninst.private_ip} > ipaddress.txt"
+       command = "echo ${aws_instance.bastioninst.private_ip} > ipaddress.txt"
+       command = "echo ${aws_instance.bastioninst.public_ip} >> ipaddress.txt"
+       command = "echo ${aws_instance.bastioninst.public_dns} >> ipaddress.txt"
    }
    
    lifecycle {
