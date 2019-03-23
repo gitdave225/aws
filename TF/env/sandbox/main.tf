@@ -4,7 +4,7 @@ provider "aws" {
 module "base" {
     source = "../../main/base"
 
-    workreg = "${var.workreg}"
+    workreg   = "${var.workreg}"
     Env       = "${var.Env}"
     CIDRAZ    = "${var.CIDRAZ}"
     RegionMap = "${var.RegionMap}"
@@ -12,4 +12,5 @@ module "base" {
     AZRegions = "${var.AZRegions}"
     SNCIDR    = "${var.SNCIDR}"
     TargetIP  = "${var.TargetIP}"
+    PubKey    = "${var.PubKey}"
 }

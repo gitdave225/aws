@@ -1,15 +1,22 @@
 resource "aws_key_pair" "mykp" {
     key_name = "mydcaws"
-    public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCc3nQ3uTpMZVIenCOOwWNmtRRLbZ2DcHPFbzUumUJCzZrJIKhkaVvkh/y0aJoGDdxQBpqOh2cw9w9aLFYwU25fVZt14xNf2ux+ZTui/x5g25SGEzQHhJE8a3N5dXrGomXnFaP0lwYe9O906MX3U19mMk9eGk1WkK3OwgKIqqDUZVRzPjrBW+n1YA/703Up3LTaKJSS5LbDHsdHzVjD5wO+6UMSR/ukd9Gxnn6p00IdQNKEhtDzMsFtjJeiIPjWY7kw6eQVOQt04NUIWodRn6Ijjdo0fJtgpdQ6V7Ktu2xtOaGSD8YPUbLDuaicoEccLOJCFtZ9Fs6j8+A/FpYTSqYT email@example.com"
+    public_key = "${var.PubKey}"
 }
 
 resource "aws_instance" "bastioninst" {
    ami                    = "${lookup(var.validamis, var.workreg)}"
    instance_type          = "t2.micro"
    key_name               = "${aws_key_pair.mykp.key_name}"
-   # vpc_security_group_ids = ""
+   vpc_security_group_ids = [ "${aws_security_group.BastionSG.id}" ]
    subnet_id              = "${aws_subnet.clientFE2.id}"
-   # iam_instance_profile   = ""
+   iam_instance_profile   = "${aws_iam_instance_profile.clientiprof.name}"
+
+   ebs_block_device = {
+       volume_type = "gp2"
+       volume_size = 20
+       device_name = "/dev/xvda"
+   }
+   
    provisioner "local-exec" {
        command        = "echo ${aws_instance.bastioninst.private_ip} > ipaddress.txt"
    }
@@ -19,16 +26,24 @@ resource "aws_instance" "bastioninst" {
    }
 
    tags {
-       Name           = "Test Instance"
+       Name           = "Bastion Host"
        Tool           = "terraform"
    }
 
    volume_tags {
-       Name           = "Test Instance Disks"
+       Name           = "Bastion Host Disks"
        Tool           = "terraform"
    }
 }
 
 output "bastionid" {
   value = "${aws_instance.bastioninst.id}"
+}
+
+output "bastion-pubIP" {
+  value = "${aws_instance.bastioninst.public_ip}"
+}
+
+output "bastion-pubName" {
+  value = "${aws_instance.bastioninst.public_dns}"
 }

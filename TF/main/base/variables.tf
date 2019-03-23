@@ -4,6 +4,8 @@ variable "Env" {}
 
 variable "TargetIP" {}
 
+variable "PubKey" {}
+
 variable "RegionMap" {
     type = "map"
 }
