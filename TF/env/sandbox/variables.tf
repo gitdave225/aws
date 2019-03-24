@@ -7,6 +7,27 @@ variable "TargetIP" {}
 
 variable "PubKey" {}
 
+variable "AmzInstance" {
+    default = "t2.micro"
+}
+# t2.micro, t2.small, t3.nano, t3.micro, t3.small
+
+variable "MinFS" {
+    default = "2"
+}
+
+variable "MaxFS" {
+    default = "4"
+}
+
+variable "HighCPUAlrm" {
+    default = 20
+}
+
+variable "LowCPUAlrm" {
+    default = 10
+}
+
 variable "RegionMap" {
     type = "map"
 
