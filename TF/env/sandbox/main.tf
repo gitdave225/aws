@@ -15,3 +15,12 @@ module "base" {
     TargetIP  = "${var.TargetIP}"
     PubKey    = "${var.PubKey}"
 }
+
+module "s3" {
+  source = "../../main/s3"
+
+    workreg   = "${var.workreg}"
+    Env       = "${var.Env}"
+    RegionMap = "${var.RegionMap}"
+    BPS3      = "${var.BPS3}"
+}

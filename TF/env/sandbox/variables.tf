@@ -9,6 +9,7 @@ variable "PubKey" {}
 
 variable "RegionMap" {
     type = "map"
+
     default = {
         "us-east-1" = "ue1"
         "us-west-2" = "uw2"
@@ -16,8 +17,9 @@ variable "RegionMap" {
 }
 
 variable "AZRegions" {
-    type = "map"
+    type        = "map"
     description = "AZs per Region"
+
     default = {
         "ue1a" = "us-east-1a"
         "ue1b" = "us-east-1b"
@@ -31,8 +33,9 @@ variable "AZRegions" {
 }
 
 variable "CIDRAZ" {
-    type = "map"
+    type        = "map"
     description = "CIDR assigned per AZ"
+
     default = {
         "ue1prod"    = "10.30.0.0/18"
         "ue1nonprod" = "10.30.64.0/18"
@@ -44,8 +47,9 @@ variable "CIDRAZ" {
 }
 
 variable "SNCIDR" {
-    type = "map"
+    type        = "map"
     description = "CIDR for Subnet"
+
     default = {
         "ue1fe1prod"    = "10.30.0.0/22"
         "ue1fe1nonprod" = "10.30.64.0/22"
@@ -75,10 +79,21 @@ variable "SNCIDR" {
 }
 
 variable "validamis" {
-    type = "map"
+    type        = "map"
     description = "Approved AMIs"
+
     default = {
         "us-east-1" = "ami-0de53d8956e8dcf80"
         "us-west-2" = "ami-061392db613a6357b"
     }  
+}
+
+variable "BPS3" {
+    type        = "map"
+    description = "ELB ID for S3 Bucket Policy"
+
+    default = {
+        "us-east-1" = "127311923021"
+        "us-west-2" = "797873946194"
+    }
 }
