@@ -11,7 +11,7 @@ resource "aws_security_group" "asgSG" {
         security_groups = ["${var.webSG}"]
         from_port       = 80
         to_port         = 80
-        description     = "HTTPS Access"
+        description     = "HTTP Access"
     }
 
     ingress {

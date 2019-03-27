@@ -26,20 +26,6 @@ data "aws_iam_policy_document" "clients3poldoc" {
     statement {
       effect    = "Allow"
       actions   = [
-        "s3:Get*",
-      ]
-      resources = ["${format("%s%s", aws_s3_bucket.clientbucket.arn, "/*")}"]
-      principals {
-          type        = "AWS"
-          identifiers = ["${data.aws_caller_identity.current.account_id}"]
-      }
-    }
-}
-
-data "aws_iam_policy_document" "clientvepoldoc" {
-    statement {
-      effect    = "Allow"
-      actions   = [
         "s3:Put*",
         "s3:Get*",
         "s3:List*",
@@ -84,6 +70,20 @@ data "aws_iam_policy_document" "clientvepoldoc" {
     }
 }
 
+data "aws_iam_policy_document" "clientvepoldoc" {
+    statement {
+      effect    = "Allow"
+      actions   = [
+        "s3:Get*",
+      ]
+      resources = ["${format("%s%s", aws_s3_bucket.clientbucket.arn, "/*")}"]
+      principals {
+          type        = "AWS"
+          identifiers = ["${data.aws_caller_identity.current.account_id}"]
+      }
+    }
+}
+
 resource "aws_s3_bucket_policy" "clientbucketpol" {
     bucket = "${aws_s3_bucket.clientbucket.id}"
     policy = "${data.aws_iam_policy_document.clients3poldoc.json}"
@@ -102,7 +102,7 @@ resource "aws_vpc_endpoint" "clientS3EP" {
     vpc_endpoint_type = "Gateway"
     service_name      = "${format("%s%s%s", "com.amazonaws.", var.workreg, ".s3")}"
     route_table_ids   = ["${var.clientRT}"]
-    policy            = "${data.aws_iam_policy_document.clientvepoldoc}"
+    policy            = "${data.aws_iam_policy_document.clientvepoldoc.json}"
 }
 
 output "clientS3" {

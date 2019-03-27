@@ -16,11 +16,6 @@ resource "aws_launch_configuration" "clientLC" {
     }
 }
 
-resource "aws_launch_template" "foobar" {
-  name_prefix   = "foobar"
-  image_id      = "ami-1a2b3c"
-  instance_type = "t2.micro"
-}
 resource "aws_autoscaling_group" "clientASG" {
     name                 = "terraform-asg-example"
     launch_configuration = "${aws_launch_configuration.clientLC.name}"
@@ -29,10 +24,5 @@ resource "aws_autoscaling_group" "clientASG" {
 
     lifecycle {
       create_before_destroy = true
-    }
-
-    launch_template {
-      id      = "${aws_launch_template.foobar.id}"
-      version = "$$Latest"
     }
 }
