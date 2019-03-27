@@ -89,3 +89,29 @@ Resources:
               AWS: !FindInMap [BPS3, !Ref 'AWS::Region', ELBID]
             Resource:
               - !Join ['', [!GetAtt ClientS3.Arn, '/', !Ref Env, '/AWSLogs/', !Ref 'AWS::AccountId', '/*']]
+
+  clientS3EP:
+    Type: AWS::EC2::VPCEndpoint
+    Properties:
+      PolicyDocument:
+        Version: '2012-10-17',
+        Statement:
+        -
+          Effect: 'Allow'
+          Principal: '*'
+          Action:
+            - s3:GetObject
+          Resource:
+            - !Join ['', [!GetAtt ClientS3.Arn, '/*']]
+      RouteTableIDs:
+        - Fn::ImportValue: !Sub
+          - '${mapregion}-VPC-APP'
+          - { mapregion: !FindInMap [MapRegion, !Ref 'AWS::Region', Name] }
+        - Fn::ImportValue: !Sub
+          - '${mapregion}-VPC-DB'
+          - { mapregion: !FindInMap [MapRegion, !Ref 'AWS::Region', Name] }
+      ServiceName:
+      VpcId:
+        Fn::ImportValue: !Sub
+          - '${mapregion}-VPC-VPCID'
+          - { mapregion: !FindInMap [MapRegion, !Ref 'AWS::Region', Name] }

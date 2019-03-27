@@ -120,3 +120,11 @@ output "clientApp" {
 output "clientDB" {
   value = "${aws_subnet.clientDB.id}"
 }
+
+output "clientRT" {
+  value = "${aws_route_table.clientRT.id}"
+}
+
+output "clientRTExt" {
+  value = "${aws_route_table.clientRTExternal.id}"
+}

@@ -23,6 +23,8 @@ module "s3" {
     Env       = "${var.Env}"
     RegionMap = "${var.RegionMap}"
     BPS3      = "${var.BPS3}"
+    clientvpc = "${module.base.clientvpc}"
+    clientRT  = "${module.base.clientRT}"
 }
 
 module "asgwalb" {

@@ -9,3 +9,7 @@ variable "RegionMap" {
 variable "BPS3" {
     type = "map"
 }
+
+variable "clientvpc" {}
+
+variable "clientRT" {}
