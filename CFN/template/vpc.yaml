@@ -1,290 +1,321 @@
 AWSTemplateFormatVersion: '2010-09-09'
-Description: Network Stack CFN for TCI
+Description: VPC Stack
 Parameters:
-  MyIPAddr:
+  Env:
     Type: String
-    Default: '173.70.126.112/32'
-  AllIn:
-    Type: String
-    Default: false
-    AllowedValues: [ true, false ]
+    Default: sandbox
+    AllowedValues:
+      - prod
+      - nonprod
+      - sandbox
+    Description: 'Deployment Environment'
 
-Conditions:
-  AllowExternal: !Equals [ !Ref AllIn, true ]
+  ContactInfo:
+    Type: String
+    Default: 'VPC Group'
+    Description: 'Contact for VPC'
+
+  ContactEmail:
+    Type: String
+    Default: 'vpcgroup@company.info'
+    Description: 'Contact email for VPC'
+
+Metadata:
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+    - Label:
+        default: VPC Environment
+      Parameters:
+      - Env
+    - Label:
+        default: Tags
+      Parameters:
+      - ContactInfo
+      - ContactEmail
+    ParameterLabels:
+      Env:
+        default: VPC Application Environment
+      ContactInfo:
+        default: Contact group or person responsible for the VPC
+      ContactEmail:
+        default: Contact email
+
+Mappings:
+  AZRegions:
+    us-east-1:
+      A: us-east-1a
+      B: us-east-1b
+      C: us-east-1c
+      D: us-east-1d
+    us-west-2:
+      A: us-west-2a
+      B: us-west-2b
+      C: us-west-2c
+      D: us-west-2d
+
+  CIDRRegions:
+    us-east-1:
+      prod: 10.30.0.0/18
+      nonprod: 10.30.64.0/18
+      sandbox: 10.30.128.0/18
+    us-west-2:
+      prod: 172.30.0.0/18
+      nonprod: 172.30.64.0/18
+      sandbox: 172.30.128.0/18
+
+  SNEnv:
+    prod:
+      frontend1: fe1prod
+      frontend2: fe2prod
+      app: appprod
+      db: dbprod
+    nonprod:
+      frontend1: fe1nonprod
+      frontend2: fe2nonprod
+      app: appnonprod
+      db: dbnonprod
+    sandbox:
+      frontend1: fe1sb
+      frontend2: fe2sb
+      app: appsb
+      db: dbsb
+
+  SNCIDR:
+    us-east-1a:
+      fe1prod: 10.30.0.0/22
+      fe1nonprod: 10.30.64.0/22
+      fe1sb: 10.30.128.0/22
+    us-east-1b:
+      fe2prod: 10.34.4.0/22
+      fe2nonprod: 10.30.68.0/22
+      fe2sb: 10.30.132.0/22
+    us-east-1c:
+      appprod: 10.38.8.0/22
+      appnonprod: 10.30.72.0/22
+      appsb: 10.30.136.0/22
+    us-east-1d:
+      dbprod: 10.30.12.0/22
+      dbnonprod: 10.30.76.0/22
+      dbsb: 10.30.140.0/22
+    us-west-1a:
+      fe1prod: 172.30.0.0/22
+      fe1nonprod: 172.30.64.0/22
+      fe1sb: 172.30.128.0/22
+    us-west-1b:
+      fe2prod: 10.34.4.0/22
+      fe2nonprod: 172.30.68.0/22
+      fe2sb: 172.30.132.0/22
+    us-west-1c:
+      appprod: 10.38.8.0/22
+      appnonprod: 172.30.72.0/22
+      appsb: 172.30.136.0/22
+    us-west-1d:
+      dbprod: 172.30.12.0/22
+      dbnonprod: 172.30.76.0/22
+      dbsb: 172.30.140.0/22
 
 Resources:
-  TCIVPC:
+  clientVPC:
     Type: AWS::EC2::VPC
     Properties:
-      CidrBlock: 172.32.0.0/16
+      CidrBlock: !FindInMap [CIDRRegions, !Ref 'AWS::Region', !Ref Env]
       EnableDnsSupport: 'true'
       EnableDnsHostnames: 'true'
       InstanceTenancy: default
       Tags:
-      - Key: Name 
-        Value: ToolChainInc-VPC
-      - Key: Tool
-        Value: CFN
-  TCINetACL:
-    Type: AWS::EC2::NetworkAcl
-    Properties:
-      VpcId: !Ref TCIVPC
-      Tags:
-      - Key: Name
-        Value: ToolChainInc-NetworkACL
-      - Key: Tool
-        Value: CFN
-  TCINACLInHTTP:
-    Type: AWS::EC2::NetworkAclEntry
-    Properties:
-      NetworkAclId: !Ref TCINetACL
-      RuleNumber: '100'
-      Protocol: '6'
-      RuleAction: allow
-      Egress: 'false'
-      CidrBlock: !Ref MyIPAddr 
-      PortRange:
-        From: '80'
-        To: '80'
-  TCINACLOut:
-    Type: AWS::EC2::NetworkAclEntry
-    Properties:
-      NetworkAclId: !Ref TCINetACL
-      RuleNumber: '100'
-      Protocol: '-1'
-      RuleAction: allow
-      Egress: 'true'
-      CidrBlock: '0.0.0.0/0'
-      Icmp:
-        Code: "-1"
-        Type: "-1"
-  TCINACLNoInRDP:
-    Type: AWS::EC2::NetworkAclEntry
-    Properties:
-      NetworkAclId: !Ref TCINetACL
-      RuleNumber: '135'
-      Protocol: '6'
-      RuleAction: deny
-      Egress: 'false'
-      CidrBlock: '0.0.0.0/0'
-      PortRange:
-        From: '3389'
-        To: '3389'
-  TCINACLNoInWINRM:
-    Type: AWS::EC2::NetworkAclEntry
-    Properties:
-      NetworkAclId: !Ref TCINetACL
-      RuleNumber: '145'
-      Protocol: '6'
-      RuleAction: deny
-      Egress: 'false'
-      CidrBlock: '0.0.0.0/0'
-      PortRange:
-        From: '5985'
-        To: '5986'
-  TCINACLInHTTPS:
-    Type: AWS::EC2::NetworkAclEntry
-    Properties:
-      NetworkAclId: !Ref TCINetACL
-      RuleNumber: '110'
-      Protocol: '6'
-      RuleAction: allow
-      Egress: 'false'
-      CidrBlock: !Ref MyIPAddr
-      PortRange:
-        From: '443'
-        To: '443'
-  TCINACLInSSH:
-    Type: AWS::EC2::NetworkAclEntry
-    Properties:
-      NetworkAclId: !Ref TCINetACL
-      RuleNumber: '120'
-      Protocol: '6'
-      RuleAction: allow
-      Egress: 'false'
-      CidrBlock: !Ref MyIPAddr
-      PortRange:
-        From: '22'
-        To: '22'
-  TCINACLInRDP:
-    Type: AWS::EC2::NetworkAclEntry
-    Properties:
-      NetworkAclId: !Ref TCINetACL
-      RuleNumber: '130'
-      Protocol: '6'
-      RuleAction: allow
-      Egress: 'false'
-      CidrBlock: !Ref MyIPAddr
-      PortRange:
-        From: '3389'
-        To: '3389'
-  TCINACLInWINRM:
-    Type: AWS::EC2::NetworkAclEntry
-    Properties:
-      NetworkAclId: !Ref TCINetACL
-      RuleNumber: '140'
-      Protocol: '6'
-      RuleAction: allow
-      Egress: 'false'
-      CidrBlock: !Ref MyIPAddr
-      PortRange:
-        From: '5985'
-        To: '5986'
-  TCINACLInCustomTCP:
-    Condition: AllowExternal
-    Type: AWS::EC2::NetworkAclEntry
-    Properties:
-      NetworkAclId: !Ref TCINetACL
-      RuleNumber: '150'
-      Protocol: '6'
-      RuleAction: allow
-      Egress: 'false'
-      CidrBlock: '0.0.0.0/0'
-      PortRange:
-        From: '1024'
-        To: '65535'
-  TCIIG:
+        - Key: Name 
+          Value: client-VPC
+        - Key: ContactInfo
+          Value: !Ref ContactInfo
+        - Key: ContactEmail
+          Value: !Ref ContactEmail
+        - Key: Environment
+          Value: !Ref Env
+        - Key: Tool
+          Value: CFN
+
+  clientIG:
     Type: AWS::EC2::InternetGateway
     Properties:
       Tags:
         - Key: Name
-          Value: ToolChainInc-IG
+          Value: client-IG
+        - Key: ContactInfo
+          Value: !Ref ContactInfo
+        - Key: ContactEmail
+          Value: !Ref ContactEmail
+        - Key: Environment
+          Value: !Ref Env
         - Key: Tool
           Value: CFN
-  TCIAttachIG:
+
+  clientAttachIG:
     Type: AWS::EC2::VPCGatewayAttachment
     Properties:
-      VpcId: !Ref TCIVPC
-      InternetGatewayId: !Ref TCIIG
-  TCIRTPub:
+      VpcId: !Ref clientVPC
+      InternetGatewayId: !Ref clientIG
+
+  clientRTExternal:
     Type: AWS::EC2::RouteTable
     Properties:
-      VpcId: !Ref TCIVPC
+      VpcId: !Ref clientVPC
       Tags:
         - Key: Name
-          Value: ToolChainInc-RouteTablePublic
+          Value: client-RouteTablePublic
+        - Key: ContactInfo
+          Value: !Ref ContactInfo
+        - Key: ContactEmail
+          Value: !Ref ContactEmail
+        - Key: Environment
+          Value: !Ref Env
         - Key: Tool
           Value: CFN
-  TCIRTPrv:
+
+  clientRT:
     Type: AWS::EC2::RouteTable
     Properties:
-      VpcId: !Ref TCIVPC
+      VpcId: !Ref clientVPC
       Tags:
         - Key: Name
-          Value: ToolChainInc-RouteTablePrivate
+          Value: client-RouteTablePrivate
+        - Key: ContactInfo
+          Value: !Ref ContactInfo
+        - Key: ContactEmail
+          Value: !Ref ContactEmail
+        - Key: Environment
+          Value: !Ref Env
         - Key: Tool
           Value: CFN
-  TCIRTIGEntry:
+
+  clientRTIGEntry:
     Type: AWS::EC2::Route
-    DependsOn: TCIAttachIG
+    DependsOn: clientAttachIG
     Properties:
-      RouteTableId: !Ref TCIRTPub
+      RouteTableId: !Ref clientRTExternal
       DestinationCidrBlock: 0.0.0.0/0
-      GatewayId: !Ref TCIIG 
-  TCIVPCSG:
-    Type: AWS::EC2::SecurityGroup
-    Properties:
-      GroupName: 'TCI-Default-SG'
-      GroupDescription: 'TCI Default Security Group'
-      VpcId: !Ref TCIVPC
-      SecurityGroupIngress:
-        - IpProtocol: 'tcp'
-          FromPort: '22'
-          ToPort: '22'
-          CidrIp: !Ref MyIPAddr
-        - IpProtocol: 'tcp'
-          FromPort: '3389'
-          ToPort: '3389'
-          CidrIp: !Ref MyIPAddr
-        - IpProtocol: 'tcp'
-          FromPort: '80'
-          ToPort: '80'
-          CidrIp: !Ref MyIPAddr
-        - IpProtocol: 'tcp'
-          FromPort: '443'
-          ToPort: '443'
-          CidrIp: !Ref MyIPAddr
-        # - IpProtocol: 'tcp'
-        #   FromPort: '1024'
-        #   ToPort: '65535'
-        #   CidrIp: '0.0.0.0/0'
-      Tags:
-        - Key: Name
-          Value: ToolChainInc-DefaultSG
-        - Key: Tool
-          Value: CFN
-  TCISNPubA:
+      GatewayId: !Ref clientIG 
+
+  clientFE1:
     Type: AWS::EC2::Subnet
     Properties:
-      VpcId: !Ref TCIVPC
-      CidrBlock: '172.32.10.0/24'
-      AvailabilityZone: !Join ['', [!Ref "AWS::Region", 'a']]
+      VpcId: !Ref clientVPC
+      CidrBlock: !FindInMap [SNCIDR, !FindInMap [AZRegions, !Ref 'AWS::Region', A], !FindInMap [SNEnv, !Ref Env, frontend1]]
+      AvailabilityZone: !FindInMap [AZRegions, !Ref 'AWS::Region', A]
+      MapPublicIpOnLaunch: True
       Tags:
         - Key: Name
-          Value: ToolChainInc-Public-A
+          Value: client-External1
+        - Key: ContactInfo
+          Value: !Ref ContactInfo
+        - Key: ContactEmail
+          Value: !Ref ContactEmail
+        - Key: Environment
+          Value: !Ref Env
         - Key: Tool
           Value: CFN
-  TCISNPrvB:
+
+  clientFE2:
     Type: AWS::EC2::Subnet
     Properties:
-      VpcId: !Ref TCIVPC
-      CidrBlock: '172.32.100.0/24'
-      AvailabilityZone: !Join ['', [!Ref "AWS::Region", 'b']]
+      VpcId: !Ref clientVPC
+      CidrBlock: !FindInMap [SNCIDR, !FindInMap [AZRegions, !Ref 'AWS::Region', B], !FindInMap [SNEnv, !Ref Env, frontend2]]
+      AvailabilityZone: !FindInMap [AZRegions, !Ref 'AWS::Region', B]
+      MapPublicIpOnLaunch: True
       Tags:
         - Key: Name
-          Value: ToolChainInc-Private-B
+          Value: client-External2
+        - Key: ContactInfo
+          Value: !Ref ContactInfo
+        - Key: ContactEmail
+          Value: !Ref ContactEmail
+        - Key: Environment
+          Value: !Ref Env
         - Key: Tool
           Value: CFN
-  TCISNPrvC:
+
+  clientApp:
     Type: AWS::EC2::Subnet
     Properties:
-      VpcId: !Ref TCIVPC
-      CidrBlock: '172.32.101.0/24'
-      AvailabilityZone: !Join ['', [!Ref "AWS::Region", 'c']]
+      VpcId: !Ref clientVPC
+      CidrBlock: !FindInMap [SNCIDR, !FindInMap [AZRegions, !Ref 'AWS::Region', C], !FindInMap [SNEnv, !Ref Env, app]]
+      AvailabilityZone: !FindInMap [AZRegions, !Ref 'AWS::Region', C]
       Tags:
         - Key: Name
-          Value: ToolChainInc-Private-C
+          Value: client-App
+        - Key: ContactInfo
+          Value: !Ref ContactInfo
+        - Key: ContactEmail
+          Value: !Ref ContactEmail
+        - Key: Environment
+          Value: !Ref Env
         - Key: Tool
           Value: CFN
-  TCIPubAAssoc:
+
+  clientDB:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref clientVPC
+      CidrBlock: !FindInMap [SNCIDR, !FindInMap [AZRegions, !Ref 'AWS::Region', D], !FindInMap [SNEnv, !Ref Env, db]]
+      AvailabilityZone: !FindInMap [AZRegions, !Ref 'AWS::Region', D]
+      Tags:
+        - Key: Name
+          Value: client-DB
+        - Key: ContactInfo
+          Value: !Ref ContactInfo
+        - Key: ContactEmail
+          Value: !Ref ContactEmail
+        - Key: Environment
+          Value: !Ref Env
+        - Key: Tool
+          Value: CFN
+
+  clientExt1Assoc:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
-      RouteTableId: !Ref TCIRTPub
-      SubnetId: !Ref TCISNPubA
-  TCIPrvBAssoc:
+      RouteTableId: !Ref clientRTExternal
+      SubnetId: !Ref clientFE1
+
+  clientExt2Assoc:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
-      RouteTableId: !Ref TCIRTPrv
-      SubnetId: !Ref TCISNPrvB
-  TCIPrvCAssoc:
+      RouteTableId: !Ref clientRTExternal
+      SubnetId: !Ref clientFE2
+
+  clientAppAssoc:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
-      RouteTableId: !Ref TCIRTPrv
-      SubnetId: !Ref TCISNPrvC
+      RouteTableId: !Ref clientRT
+      SubnetId: !Ref clientApp
+
+  clientDBAssoc:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref clientRT
+      SubnetId: !Ref clientDB
+
 Outputs:
-  TCIVPCID:
-    Description: VPC ID for ToolChain, Inc.
-    Value: !Ref TCIVPC
+  clientVPCID:
+    Description: VPC ID
+    Value: !Ref clientVPC
     Export:
       Name: !Sub "${AWS::StackName}-VPCID"
-  TCIVPCSG:
-    Description: Default Security Group for ToolChain, Inc.
-    Value: !Ref TCIVPCSG
+  clientFE1:
+    Description: External Subnet 1
+    Value: !Ref clientFE1
     Export:
-      Name: !Sub "${AWS::StackName}-SG"
-  TCISNPubA:
-    Description: Public Subnet A
-    Value: !Ref TCISNPubA
+      Name: !Sub "${AWS::StackName}-FE1"
+  clientFE2:
+    Description: External Subnet 2
+    Value: !Ref clientFE2
     Export:
-      Name: !Sub "${AWS::StackName}-PubA"
-  TCISNPrvB:
-    Description: Private Subnet B
-    Value: !Ref TCISNPrvB
+      Name: !Sub "${AWS::StackName}-FE2"
+  clientApp:
+    Description: Application Subnet
+    Value: !Ref clientApp
     Export:
-      Name: !Sub "${AWS::StackName}-PrvB"
-  TCISNPrvC:
-    Description: Private Subnet C
-    Value: !Ref TCISNPrvC
+      Name: !Sub "${AWS::StackName}-APP"
+  clientDB:
+    Description: Database Subnet
+    Value: !Ref clientDB
     Export:
-      Name: !Sub "${AWS::StackName}-PrvC"
-
+      Name: !Sub "${AWS::StackName}-DB"
