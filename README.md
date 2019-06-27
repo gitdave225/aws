@@ -1,6 +1,6 @@
 # AWS Related Scripts
 
-2019-03-27
+2019-06-27
 
 I plan on uploading cloudformation templates and AWS sample files to this repo. Any other AWS related bits will end up here as well.
 
@@ -24,7 +24,7 @@ I plan on uploading cloudformation templates and AWS sample files to this repo. 
 
 3. Trying terraform.
 
-  When I started using cloudformation I was also setting up a process to build windows servers (on-prem only) using terraform. I knew terraform had hooks to AWS but I never had a chance to try it out. I'll probably challenge myself to build both a cloudformation nested stack and a terraform module to setup an environment.
+  Completed setting up an environment to allow public access to two web servers via terraform. I am starting to look at 0.12 and see where I can improve my code.
 
 4. VSS-Enabled Snapshots for EBS Volumes
 
@@ -41,9 +41,9 @@ I plan on uploading cloudformation templates and AWS sample files to this repo. 
 
 To-Do:
   1. ~~Setup AWS Environment.~~ *NOTE: Built base CFT and TF code for an environment*
-  2. Build a dispora server.
-    https://wiki.diasporafoundation.org/Installation
-  3. Setup chef server.
-  4. Build a docker environment.
-  5. Try out ECS.
- 
+  2. Build my own git server. *NOTE: I will add a separate module or stack for this. No plans on moving off github though.*
+  https://gitea.io/en-us/
+  3. ~~Setup my personal chef server.~~ *NOTE: Currently using the hosted chef server. I will skip this since there is aws native chef available already*
+  4. ~~Build a docker environment.~~
+  5. ~~Try out ECS.~~
+  6. Pass the AWS CSA Pro Exam before Aug 2019 EOM.
